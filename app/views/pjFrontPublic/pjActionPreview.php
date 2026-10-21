@@ -31,6 +31,7 @@
 			<?php include PJ_VIEWS_PATH . 'pjFrontPublic/elements/cart.php';  ?>
 			
 			<div class="panel-body pjAsBody pjAsCheckout">
+				<?php include PJ_VIEWS_PATH . 'pjFrontPublic/elements/t11_summary.php'; ?>
 				<div class="clearfix">
 					<h3 class="pull-left text-uppercase pjAsSectionTotal"><?php __('single_price');?></h3><!-- /.pull-left text-uppercase pjAsSectionTotal -->
 
@@ -67,7 +68,7 @@
 					</h3><!-- /.pull-right text-uppercase pjAsSectionPrice -->
 				</div><!-- /.clearfix -->
 				
-				<h3 class="text-uppercase pjAsSectionTitle"><?php __('front_preview_form');?>:</h3><!-- /.pull-left text-uppercase pjAsSectionTitle -->
+				<h3 class="text-uppercase pjAsSectionTitle"><?php __('front_preview_form');?><span class="pjAsT11Colon">:</span></h3><!-- /.pull-left text-uppercase pjAsSectionTitle -->
 				
 				<div class="form-horizontal">
 					<form role="form" data-toggle="validator" method="post" action="" novalidate="true" class="asSelectorPreviewForm">

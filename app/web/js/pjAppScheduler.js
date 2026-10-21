@@ -777,6 +777,37 @@
 			
 			return this;
 		},
+		/**
+		 * Theme 11: payment methods as radio cards. They are built from the real <select name="payment_method">
+		 * (kept in the form, validated and submitted as before); the cards stay hidden in the other themes.
+		 */
+		buildPayCards: function () {
+			var $select = this.$container.find("select[name='payment_method']");
+			if (!$select.length || this.$container.find(".pjAsT11Pay").length) {
+				return;
+			}
+			var $wrap = pjQ.$('<div class="pjAsT11Pay" role="radiogroup"></div>');
+			$select.find("option").each(function () {
+				var value = pjQ.$(this).val();
+				if (!value) {
+					return;
+				}
+				var $input = pjQ.$('<input type="radio" class="ignore">').val(value).prop("checked", value === $select.val());
+				$wrap.append(pjQ.$('<label class="pjAsT11PayItem"></label>').append($input).append(pjQ.$("<span></span>").text(pjQ.$(this).text())));
+			});
+			if (!$wrap.children().length) {
+				return;
+			}
+			$wrap.on("change", "input", function () {
+				$wrap.find("input").not(this).prop("checked", false);
+				$select.val(pjQ.$(this).val()).trigger("change");
+				if (validate && $select.closest("form").data("validator")) {
+					$select.valid();
+				}
+			});
+			$select.before($wrap);
+		},
+		
 		loadCheckout: function () {
 			var that = this;
 			this.disableButtons.call(this);
@@ -790,6 +821,7 @@
 			}).done(function (data) {
 				that.$container.html(data);
 				pjQ.$('.modal-dialog').css("z-index", "9999"); 
+				that.buildPayCards.call(that);
 				
 				var $reCaptcha = that.$container.find('#g-recaptcha_' + that.options.cid);
 				if ($reCaptcha.length > 0)

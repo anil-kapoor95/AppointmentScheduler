@@ -67,7 +67,7 @@ $cart = $controller->cart->getAll();
 									<div class="col-lg-9 col-md-9 col-sm-9 col-xs-12">
 										<h2 class="pjAsListElementTitle text-capitalize"><?php echo pjSanitize::html($employee['name']); ?></h2><!-- /.pjAsListElementTitle -->
 										
-										<h3 class="pjAsEmployeePosition text-capitalize"><?php echo pjSanitize::html($employee['services']); ?></h3><!-- /.pjAsEmployeePosition -->
+										<h3 class="pjAsEmployeePosition text-capitalize"><?php echo pjTheme11::positionChips($employee['services']); ?></h3><!-- /.pjAsEmployeePosition -->
 										
 										<p><?php echo nl2br(pjSanitize::html($employee['notes'])); ?></p>
 										<?php

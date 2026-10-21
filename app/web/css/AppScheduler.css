@@ -180,7 +180,9 @@
 	#Theme 11 helpers (step tracker + slot legend) - only theme11.css shows them
 ========================================================================== */
 #pjWrapper .pjAsT11Steps,
-#pjWrapper .pjAsT11Legend { display: none; }
+#pjWrapper .pjAsT11Legend,
+#pjWrapper .pjAsT11Summary,
+#pjWrapper .pjAsT11Pay { display: none; }
 
 /* ==========================================================================
 	#Responsive

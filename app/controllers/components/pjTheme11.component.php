@@ -328,6 +328,21 @@ class pjTheme11
 		return '@import url("https://fonts.googleapis.com/css2?family=' . implode('&family=', array_keys($families)) . '&display=swap");' . "\n";
 	}
 	
+	/**
+	 * "Massage, Training" -> one <span> per service (Theme 11 draws them as chips). The comma stays in its own span,
+	 * so the other themes look exactly as before (they print the same text) and Theme 11 simply hides it.
+	 */
+	public static function positionChips($services)
+	{
+		$parts = array_filter(array_map('trim', explode(',', (string) $services)), 'strlen');
+		$html = array();
+		foreach ($parts as $part)
+		{
+			$html[] = '<span class="pjAsT11Chip">' . pjSanitize::html($part) . '</span>';
+		}
+		return implode('<span class="pjAsT11Sep">, </span>', $html);
+	}
+	
 	/** the --t11-* block for the given wrapper element id, e.g. pjWrapperAppScheduler_1 */
 	public static function cssVariables($values, $wrapper_id)
 	{
