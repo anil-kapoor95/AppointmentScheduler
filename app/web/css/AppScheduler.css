@@ -177,6 +177,12 @@
 .pjAsjQueryUI td span, 
 .pjAsjQueryUI td a{text-align: center !important;}
 /* ==========================================================================
+	#Theme 11 helpers (step tracker + slot legend) - only theme11.css shows them
+========================================================================== */
+#pjWrapper .pjAsT11Steps,
+#pjWrapper .pjAsT11Legend { display: none; }
+
+/* ==========================================================================
 	#Responsive
 ========================================================================== */
 @media only screen and ( max-width: 991px ) {

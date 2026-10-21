@@ -376,11 +376,22 @@ class pjFrontEnd extends pjFront
 	
 	public function pjActionLoadCss()
 	{
-		$theme = $this->_get->check('theme') ? $this->_get->toString('theme') : $this->option_arr['o_theme'];
-		if((int) $theme > 0)
+		$theme = $this->option_arr['o_theme'];
+		if ($this->_get->check('theme'))
 		{
-			$theme = 'theme' . $theme;
+			// only theme1 ... theme11 are accepted - the value is used to build a file name
+			$requested = pjTheme11::sanitizeThemeName($this->_get->toString('theme'));
+			if ($requested !== NULL)
+			{
+				$theme = $requested;
+			}
 		}
+		$theme = pjTheme11::sanitizeThemeName((string) $theme);
+		if ($theme === NULL)
+		{
+			$theme = 'theme1';
+		}
+		$wrapper_id = "pjWrapperAppScheduler_" . $this->getForeignId();
 		$dm = new pjDependencyManager(PJ_INSTALL_PATH, PJ_THIRD_PARTY_PATH);
 		$dm->load(PJ_CONFIG_PATH . 'dependencies.php')->resolve();
 		$arr = array(
@@ -392,6 +403,14 @@ class pjFrontEnd extends pjFront
 			array('file' => "$theme.css", 'path' => PJ_CSS_PATH . "themes/")
 		);
 		header("Content-Type: text/css; charset=utf-8");
+		
+		$t11 = NULL;
+		if ($theme === pjTheme11::THEME)
+		{
+			$t11 = pjTheme11::values($this->option_arr);
+			// @import has to be the very first rule of the stylesheet
+			echo pjTheme11::fontImport($t11);
+		}
 		foreach ($arr as $item)
 		{
 			ob_start();
@@ -407,11 +426,16 @@ class pjFrontEnd extends pjFront
 						PJ_INSTALL_URL . PJ_FRAMEWORK_LIBS_PATH . 'pj/fonts/glyphicons',
 						PJ_INSTALL_URL . $dm->getPath('font_awesome') . 'fonts/',
 						PJ_INSTALL_URL . $dm->getPath('pj_jquery_ui') . 'css/smoothness/images/',
-						"pjWrapperAppScheduler_" . $this->getForeignId()
+						$wrapper_id
 					),
 					$string
 				) . "\n";
 			}
+		}
+		if ($t11 !== NULL)
+		{
+			// Theme 11: the saved colours / fonts / shape as one block of --t11-* variables (theme11.css only reads them)
+			echo pjTheme11::cssVariables($t11, $wrapper_id);
 		}
 		exit;
 	}

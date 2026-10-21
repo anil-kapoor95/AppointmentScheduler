@@ -1,4 +1,5 @@
 <div class="container-fluid">
+	<?php $t11_step = 2; include PJ_VIEWS_PATH . 'pjFrontPublic/elements/t11_steps.php'; ?>
 	<div class="panel panel-default pjAsContainer">
 		<?php
 		if (isset($tpl['status']) && $tpl['status'] == 'OK')
