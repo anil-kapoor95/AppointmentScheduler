@@ -32,6 +32,7 @@
 			
 			<div class="panel-body pjAsBody pjAsCheckout">
 				<?php include PJ_VIEWS_PATH . 'pjFrontPublic/elements/t11_summary.php'; ?>
+				<?php if (!empty($tpl['summary']['voucher_error']['text'])) : ?><div class="alert alert-warning pjAsVoucherNotice" role="alert"><?php echo pjSanitize::html($tpl['summary']['voucher_error']['text']); ?></div><?php endif; ?>
 				<div class="clearfix">
 					<h3 class="pull-left text-uppercase pjAsSectionTotal"><?php __('single_price');?></h3><!-- /.pull-left text-uppercase pjAsSectionTotal -->
 
@@ -39,6 +40,7 @@
 						<strong><?php echo pjCurrency::formatPrice($tpl['summary']['price']);?></strong>
 					</h3><!-- /.pull-right text-uppercase pjAsSectionPrice -->
 				</div><!-- /.clearfix -->
+				<?php include PJ_VIEWS_PATH . 'pjFrontPublic/elements/voucher_discount_row.php'; ?>
 				<?php 
 				if ($tpl['summary']['tax'] > 0)
 				{
@@ -262,4 +264,4 @@
 		}
 		?>
 	</div><!-- /.panel panel-default pjAsContainer -->
-</div>
+</div>

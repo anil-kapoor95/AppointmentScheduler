@@ -24,7 +24,7 @@ if (isset($tpl['status']) && $tpl['status'] == "OK")
 					        switch ($tpl['booking_arr']['payment_method'])
 	                        {
 	                            case 'bank':
-	                            	echo $status[1] . '<br/>' .  pjSanitize::html($tpl['bank_account']);
+	                            	echo $status[1] . (isset($tpl['bank_account']) ? '<br/>' .  pjSanitize::html($tpl['bank_account']) : '');
 	                            	?><br/><a href="#" class="alert-link pjAsBtnBackToServices"><?php __('front_start_over');?></a><?php
 	                            	break;
 	                            case 'creditcard':
@@ -57,4 +57,4 @@ if (isset($tpl['status']) && $tpl['status'] == "OK")
 	</div><!-- /.panel-heading pjAsHead -->
 	<?php
 }
-?>
+?>

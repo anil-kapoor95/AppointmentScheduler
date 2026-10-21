@@ -33,8 +33,12 @@ if ($t11_title === NULL || $t11_title === '')
 		<?php
 	}
 	?>
+	<?php if (isset($t11_voucher_box) && $t11_voucher_box) { include PJ_VIEWS_PATH . 'pjFrontPublic/elements/voucher.php'; } ?>
 	<dl class="pjAsT11Totals">
 		<div class="pjAsT11TotalRow"><dt><?php __('single_price'); ?></dt><dd><?php echo pjCurrency::formatPrice($tpl['summary']['price']); ?></dd></div>
+		<?php if (!empty($tpl['summary']['voucher']) && (float) $tpl['summary']['discount'] > 0) : ?>
+			<div class="pjAsT11TotalRow pjAsT11TotalDiscount"><dt><?php __('front_voucher_discount'); ?> (<?php echo pjSanitize::html($tpl['summary']['voucher']['code']); ?>)</dt><dd>-<?php echo pjCurrency::formatPrice($tpl['summary']['discount']); ?></dd></div>
+		<?php endif; ?>
 		<?php if ($tpl['summary']['tax'] > 0) : ?>
 			<div class="pjAsT11TotalRow"><dt><?php __('front_tax'); ?> (<?php echo $tpl['option_arr']['o_tax']; ?>%)</dt><dd><?php echo pjCurrency::formatPrice($tpl['summary']['tax']); ?></dd></div>
 		<?php endif; ?>

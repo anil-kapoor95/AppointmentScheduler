@@ -35,7 +35,7 @@ $short_days = __('short_days', true);
 				</div>
 				<?php 
 				break;
-			case in_array($controller->_get->toString('err'), array('ABK08', 'ABK13', 'ABK14')):	
+			case in_array($controller->_get->toString('err'), array('ABK08', 'ABK13', 'ABK14', 'AV09')):	
 				?>
 				<div class="alert alert-danger">
 					<i class="fa fa-exclamation-triangle m-r-xs"></i>
@@ -232,4 +232,4 @@ myLabel.days = "<?php echo implode("_", $short_days);?>";
 myLabel.has_update = <?php echo (int) $tpl['has_update']; ?>;
 myLabel.has_delete = <?php echo (int) $tpl['has_delete']; ?>;
 myLabel.has_delete_bulk = <?php echo (int) $tpl['has_delete_bulk']; ?>;
-</script>
+</script>

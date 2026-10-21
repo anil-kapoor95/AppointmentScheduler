@@ -535,7 +535,8 @@ class pjAppController extends pjBaseAppController
 			'{State}', '{Zip}', '{Address1}', '{Address2}', '{Notes}',
 			'{CCType}', '{CCNum}', '{CCExpMonth}', '{CCExpYear}', '{CCSec}', '{PaymentMethod}',
 			'{Price}', '{Deposit}', '{Total}', '{Tax}',
-			'{BookingID}', '{Services}', '{CancelURL}'
+			'{BookingID}', '{Services}', '{CancelURL}',
+			'{Discount}', '{VoucherCode}'
 		);
 		$replace = array(
 			pjSanitize::clean(@$booking['c_name']), pjSanitize::clean(@$booking['c_email']), pjSanitize::clean(@$booking['c_phone']), pjSanitize::clean(@$booking['country_name']), pjSanitize::clean(@$booking['c_city']),
@@ -550,7 +551,9 @@ class pjAppController extends pjBaseAppController
 			pjCurrency::formatPrice($booking['booking_deposit']),
 			pjCurrency::formatPrice($booking['booking_total']),
 			pjCurrency::formatPrice($booking['booking_tax']),
-			$booking['uuid'], $booking_data, '<a href="'.$cancelURL.'">'.$cancelURL.'</a>');
+			$booking['uuid'], $booking_data, '<a href="'.$cancelURL.'">'.$cancelURL.'</a>',
+			pjCurrency::formatPrice(isset($booking['booking_discount']) ? $booking['booking_discount'] : 0),
+			pjSanitize::clean(isset($booking['voucher_code']) ? $booking['voucher_code'] : ''));
 		
 		return compact('search', 'replace');
 	}

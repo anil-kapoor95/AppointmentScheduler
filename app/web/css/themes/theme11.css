@@ -386,6 +386,20 @@
 #pjWrapper .pjAsT11ItemEmployee, #pjWrapper .pjAsT11ItemWhen { font-size: .87em; color: var(--t11-muted); }
 #pjWrapper .pjAsT11ItemRemove { flex: 0 0 34px; width: 34px; height: 34px; padding: 0; border: 0; border-radius: 50%; background: var(--t11-soft); color: var(--t11-link); font-size: 18px; line-height: 1; cursor: pointer; transition: background-color .15s, color .15s; }
 #pjWrapper .pjAsT11ItemRemove:hover, #pjWrapper .pjAsT11ItemRemove:focus { background: var(--t11-btn); color: var(--t11-btn-text); outline: 0; }
+/* voucher (discount code): the box lives in the summary card, the plain copy of the other themes is hidden */
+#pjWrapper .pjAsCheckout > .pjAsVoucher { display: none; }
+#pjWrapper .pjAsT11Summary .pjAsVoucher { margin: 4px 0 6px; padding: 14px 0 6px; border-top: 1px solid var(--t11-line); }
+#pjWrapper .pjAsT11Summary .pjAsVoucherLabel { margin-bottom: 8px; font-size: .8em; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--t11-heading); }
+#pjWrapper .pjAsT11Summary .pjAsVoucherForm .form-control { height: 44px; padding: 0 14px; border: 1px solid var(--t11-line); border-radius: var(--t11-ri); background: var(--t11-card); color: var(--t11-body); font-size: 1em; box-shadow: none; letter-spacing: .04em; }
+#pjWrapper .pjAsT11Summary .pjAsVoucherForm .form-control:focus { border-color: var(--t11-accent); outline: 0; box-shadow: 0 0 0 3px color-mix(in srgb, var(--t11-accent) 25%, transparent); }
+#pjWrapper .pjAsT11Summary .pjAsVoucherForm .btn { height: 44px; padding: 0 18px; border: 1px solid var(--t11-btn2); border-radius: var(--t11-rb); background: var(--t11-btn2); color: var(--t11-btn2-text); font-weight: 700; box-shadow: none; }
+#pjWrapper .pjAsT11Summary .pjAsVoucherForm .btn:hover, #pjWrapper .pjAsT11Summary .pjAsVoucherForm .btn:focus { background: var(--t11-btn); border-color: var(--t11-btn); color: var(--t11-btn-text); }
+#pjWrapper .pjAsT11Summary .pjAsVoucherOn { border: 1px dashed var(--t11-accent); border-radius: var(--t11-ri); background: var(--t11-soft); color: var(--t11-heading); }
+#pjWrapper .pjAsT11Summary .pjAsVoucherRate { color: var(--t11-muted); }
+#pjWrapper .pjAsT11Summary .pjAsVoucherRemove { color: var(--t11-link); font-weight: 700; }
+#pjWrapper .pjAsT11Summary .pjAsVoucherErr { color: var(--t11-link); }
+#pjWrapper .pjAsT11Summary .pjAsVoucherNotice { border-radius: var(--t11-ri); }
+#pjWrapper .pjAsT11TotalDiscount dd, #pjWrapper .pjAsT11TotalDiscount dt { color: var(--t11-link); font-weight: 700; }
 #pjWrapper .pjAsT11Totals { margin: 8px 0 0; }
 #pjWrapper .pjAsT11TotalRow { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 8px 0; }
 #pjWrapper .pjAsT11TotalRow dt { float: none; width: auto; margin: 0; font-weight: 500; text-align: left; color: var(--t11-body); }
