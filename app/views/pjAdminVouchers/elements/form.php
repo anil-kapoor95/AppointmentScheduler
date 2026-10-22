@@ -11,6 +11,13 @@ $ordered = function ($name, $keys) {
 	foreach ($arr as $k => $v) { if (!isset($out[$k])) { $out[$k] = $v; } }
 	return $out;
 };
+$voucher_valid_labels = function ($arr) {
+	// short names for the validity options (older installs still have the long default texts in the database)
+	$old = array('fixed' => 'One day, time window', 'period' => 'Date and time period', 'recurring' => 'Weekly, time window');
+	$new = array('fixed' => 'Fixed date', 'period' => 'Period', 'recurring' => 'Recurring');
+	foreach ($old as $k => $o) { if (isset($arr[$k]) && $arr[$k] === $o) { $arr[$k] = $new[$k]; } }
+	return $arr;
+};
 /**
  * Shared voucher form (create + update).
  * Times are shown in the configured time format (24h or 12h with am/pm) and stored as 24h by the controller.
@@ -26,7 +33,7 @@ $g = function ($key, $default = '') use ($arr) {
 };
 $posted = !empty($arr['posted']);
 $type = $g('type', 'percent');
-$apply = $g('apply', 'each');
+$apply = $g('apply', 'total');
 $valid = $g('valid', 'always');
 $valid_on = $g('valid_on', 'booking');
 $status = $g('status', 'T');
@@ -90,15 +97,18 @@ if (!empty($tpl['errors'])) : ?>
 	data-exists="<?php echo pjSanitize::html(__('voucher_err_code_exists', true)); ?>" data-code-format="<?php echo pjSanitize::html(__('voucher_err_code', true)); ?>" data-wstart="<?php echo (int) $tpl['option_arr']['o_week_start']; ?>"
 	data-months="<?php echo pjSanitize::html(implode('_', $voucher_months)); ?>" data-days="<?php echo pjSanitize::html(implode('_', $voucher_days_min)); ?>"></div>
 
+<input type="hidden" name="apply" value="<?php echo pjSanitize::html($apply); ?>">
+<input type="hidden" name="max_uses" id="max_uses" value="<?php echo pjSanitize::html($g('max_uses')); ?>">
+<input type="hidden" name="max_uses_per_email" id="max_uses_per_email" value="<?php echo pjSanitize::html($g('max_uses_per_email')); ?>">
+<input type="hidden" name="valid_on" value="appointment">
 <div class="row">
 	<div class="col-lg-3 col-md-6 col-sm-6">
 		<div class="form-group">
 			<label class="control-label"><?php __('voucher_code'); ?></label>
 			<input type="text" name="code" id="code" class="form-control required" maxlength="50" value="<?php echo pjSanitize::html($g('code')); ?>" autocomplete="off" data-msg-required="<?php echo pjSanitize::html($required_msg); ?>">
-			<span class="help-block m-b-none" style="font-size:12px;"><?php __('voucher_code_hint'); ?></span>
 		</div>
 	</div>
-	<div class="col-lg-3 col-md-6 col-sm-6">
+	<div class="col-lg-2 col-md-6 col-sm-6">
 		<div class="form-group">
 			<label class="control-label"><?php __('voucher_type'); ?></label>
 			<select name="type" id="type" class="form-control">
@@ -117,20 +127,7 @@ if (!empty($tpl['errors'])) : ?>
 			</div>
 		</div>
 	</div>
-	<div class="col-lg-3 col-md-6 col-sm-6 box-apply">
-		<div class="form-group">
-			<label class="control-label"><?php __('voucher_apply'); ?></label>
-			<select name="apply" id="apply" class="form-control">
-				<?php foreach ($ordered('voucher_apply_arr', array('each','total')) as $k => $v) : ?>
-					<option value="<?php echo $k; ?>"<?php echo $apply === $k ? ' selected="selected"' : ''; ?>><?php echo pjSanitize::html($v); ?></option>
-				<?php endforeach; ?>
-			</select>
-		</div>
-	</div>
-</div>
-
-<div class="row">
-	<div class="col-lg-6 col-md-6 col-sm-12">
+	<div class="col-lg-4 col-md-6 col-sm-6">
 		<div class="form-group">
 			<label class="control-label"><?php __('voucher_services'); ?></label>
 			<select name="service_id[]" id="service_id" multiple="multiple" class="form-control select-item" data-placeholder="-- <?php echo pjSanitize::html(__('lblAll', true)); ?> --">
@@ -138,21 +135,6 @@ if (!empty($tpl['errors'])) : ?>
 					<option value="<?php echo (int) $s['id']; ?>"<?php echo isset($ve_arr[$s['id']]) ? ' selected="selected"' : ''; ?>><?php echo pjSanitize::html($s['name'] !== null && $s['name'] !== '' ? $s['name'] : '#' . $s['id']); ?></option>
 				<?php endforeach; ?>
 			</select>
-			<span class="help-block m-b-none" style="font-size:12px;"><?php __('voucher_services_hint'); ?></span>
-		</div>
-	</div>
-	<div class="col-lg-3 col-md-3 col-sm-6">
-		<div class="form-group">
-			<label class="control-label"><?php __('voucher_max_uses'); ?></label>
-			<input type="text" name="max_uses" id="max_uses" class="form-control text-right" value="<?php echo pjSanitize::html($g('max_uses')); ?>" autocomplete="off" placeholder="&infin;">
-			<span class="help-block m-b-none" style="font-size:12px;"><?php __('voucher_max_uses_hint'); ?></span>
-		</div>
-	</div>
-	<div class="col-lg-3 col-md-3 col-sm-6">
-		<div class="form-group">
-			<label class="control-label"><?php __('voucher_max_uses_per_email'); ?></label>
-			<input type="text" name="max_uses_per_email" id="max_uses_per_email" class="form-control text-right" value="<?php echo pjSanitize::html($g('max_uses_per_email')); ?>" autocomplete="off" placeholder="&infin;">
-			<span class="help-block m-b-none" style="font-size:12px;"><?php __('voucher_max_uses_per_email_hint'); ?></span>
 		</div>
 	</div>
 </div>
@@ -162,24 +144,13 @@ if (!empty($tpl['errors'])) : ?>
 		<div class="form-group">
 			<label class="control-label"><?php __('voucher_valid'); ?></label>
 			<select name="valid" id="valid" class="form-control">
-				<?php foreach ($ordered('voucher_valids', array('always','fixed','period','recurring')) as $k => $v) : ?>
+				<?php foreach ($voucher_valid_labels($ordered('voucher_valids', array('always','fixed','period','recurring'))) as $k => $v) : ?>
 					<option value="<?php echo $k; ?>"<?php echo $valid === $k ? ' selected="selected"' : ''; ?>><?php echo pjSanitize::html($v); ?></option>
 				<?php endforeach; ?>
 			</select>
 		</div>
 	</div>
-	<div class="col-lg-5 col-md-6 col-sm-6 box-valid-on">
-		<div class="form-group">
-			<label class="control-label"><?php __('voucher_valid_on'); ?></label>
-			<select name="valid_on" id="valid_on" class="form-control">
-				<?php foreach ($ordered('voucher_valid_on_arr', array('booking','appointment')) as $k => $v) : ?>
-					<option value="<?php echo $k; ?>"<?php echo $valid_on === $k ? ' selected="selected"' : ''; ?>><?php echo pjSanitize::html($v); ?></option>
-				<?php endforeach; ?>
-			</select>
-			<span class="help-block m-b-none" style="font-size:12px;"><?php __('voucher_valid_on_hint'); ?></span>
-		</div>
-	</div>
-	<div class="col-lg-4 col-md-12 col-sm-12">
+	<div class="col-lg-3 col-md-6 col-sm-6">
 		<div class="form-group">
 			<label class="control-label"><?php __('voucher_status'); ?></label>
 			<select name="status" id="status" class="form-control">
@@ -222,4 +193,3 @@ if (!empty($tpl['errors'])) : ?>
 		<div class="col-lg-3 col-md-4 col-sm-6"><div class="form-group"><label class="control-label"><?php __('voucher_time_to'); ?></label><?php echo $timeSelect('r', 'to'); ?></div></div>
 	</div>
 </div>
-<p class="text-muted valid-box" id="valid_hint" style="display:none"><i class="fa fa-info-circle"></i> <?php __('voucher_time_hint'); ?></p>

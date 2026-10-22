@@ -348,6 +348,12 @@ class pjVoucherEngine
 		{
 			return $err('not_found');
 		}
+		// a date / time window always refers to the APPOINTMENT (the date and time the customer picked), never to the
+		// moment the booking is made - also for vouchers saved earlier with the old "valid on: booking" setting
+		if ($v['valid'] !== 'always')
+		{
+			$v['valid_on'] = 'appointment';
+		}
 		$skip_window = !empty($ctx['skip_window']); // "grandfathered": a voucher already stored on an existing booking
 		if ($v['status'] !== 'T' && !$skip_window)
 		{

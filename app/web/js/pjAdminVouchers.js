@@ -130,33 +130,21 @@ var jQuery_1_8_2 = jQuery_1_8_2 || $.noConflict();
 					{text: myLabel.discount, type: "text", sortable: true, editable: false, renderer: function (str, obj) { return obj.discount_f; }},
 					{text: myLabel.services, type: "text", sortable: false, editable: false},
 					{text: myLabel.valid, type: "text", sortable: false, editable: false, renderer: function (str, obj) { return obj.valid_f; }},
-					{text: myLabel.usage, type: "text", sortable: false, editable: false, renderer: function (str, obj) { return obj.usage_f; }},
 					{text: myLabel.status, type: "toggle", sortable: true, editable: editable, positiveLabel: myLabel.active, positiveValue: "T", negativeLabel: myLabel.inactive, negativeValue: "F"}
 				],
 				dataUrl: "index.php?controller=pjAdminVouchers&action=pjActionGetVoucher",
 				dataType: "json",
-				fields: ['code', 'discount', 'services', 'valid', 'usage', 'status'],
+				fields: ['code', 'discount', 'services', 'valid', 'status'],
 				paginator: {actions: actions, gotoPage: true, paginate: true, total: true, rowCount: true},
 				saveUrl: "index.php?controller=pjAdminVouchers&action=pjActionSaveVoucher&id={:id}",
 				select: select
 			});
 
-			$(document).on("click", ".btn-all", function (e) {
-				e.preventDefault();
-				$(this).addClass("btn-primary active").removeClass("btn-default").siblings(".btn").removeClass("btn-primary active").addClass("btn-default");
+			$(document).on("change", ".vch-valid-filter", function (e) {
 				var content = $grid.datagrid("option", "content"), cache = $grid.datagrid("option", "cache");
-				$.extend(cache, {valid: "", q: ""});
+				$.extend(cache, {valid: $(this).val()});
 				$grid.datagrid("option", "cache", cache);
-				$grid.datagrid("load", "index.php?controller=pjAdminVouchers&action=pjActionGetVoucher", "id", "DESC", content.page, content.rowCount);
-			}).on("click", ".btn-filter", function (e) {
-				e.preventDefault();
-				var $this = $(this), content = $grid.datagrid("option", "content"), cache = $grid.datagrid("option", "cache"), obj = {};
-				$this.addClass("btn-primary active").removeClass("btn-default").siblings(".btn").removeClass("btn-primary active").addClass("btn-default");
-				obj.valid = "";
-				obj[$this.data("column")] = $this.data("value");
-				$.extend(cache, obj);
-				$grid.datagrid("option", "cache", cache);
-				$grid.datagrid("load", "index.php?controller=pjAdminVouchers&action=pjActionGetVoucher", "id", "DESC", content.page, content.rowCount);
+				$grid.datagrid("load", "index.php?controller=pjAdminVouchers&action=pjActionGetVoucher", "id", "DESC", 1, content.rowCount);
 			}).on("submit", ".frm-filter", function (e) {
 				e.preventDefault();
 				var content = $grid.datagrid("option", "content"), cache = $grid.datagrid("option", "cache");

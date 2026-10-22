@@ -2,6 +2,7 @@
 $titles = __('error_titles', true);
 $bodies = __('error_bodies', true);
 $vv = __('voucher_valids', true);
+foreach (array('fixed' => array('One day, time window', 'Fixed date'), 'period' => array('Date and time period', 'Period'), 'recurring' => array('Weekly, time window', 'Recurring')) as $k => $pair) { if (isset($vv[$k]) && $vv[$k] === $pair[0]) { $vv[$k] = $pair[1]; } }
 $vt = __('voucher_types', true);
 $filter = __('filter', true, true);
 ?>
@@ -13,7 +14,7 @@ $filter = __('filter', true, true);
             </div>
         </div><!-- /.row -->
 
-        <p class="m-b-none"><i class="fa fa-info-circle"></i> <?php __('infoVouchersDesc'); ?></p>
+        <p class="m-b-none"><i class="fa fa-info-circle"></i> <?php echo str_replace(', to a date or time window and to a maximum number of uses', ' or to a date or time window', __('infoVouchersDesc', true)); ?></p>
     </div><!-- /.col-md-12 -->
 </div>
 
@@ -56,7 +57,7 @@ $filter = __('filter', true, true);
                             <?php endif; ?>
                         </div><!-- /.col-md-3 -->
 
-                        <div class="col-md-4 col-sm-8">
+                        <div class="col-md-5 col-sm-8">
                             <form action="" method="get" class="form-horizontal frm-filter">
                                 <div class="input-group">
                                     <input type="text" name="q" placeholder="<?php __('btnSearch', false, true); ?>" class="form-control">
@@ -65,15 +66,15 @@ $filter = __('filter', true, true);
                                     </div>
                                 </div>
                             </form>
-                        </div><!-- /.col-md-4 -->
+                        </div><!-- /.col-md-5 -->
 
-                        <div class="col-md-5 text-right">
-                            <div class="btn-group" role="group">
-                                <button type="button" class="btn btn-primary btn-all active"><?php __('lblAll'); ?></button>
+                        <div class="col-md-4 col-sm-12 text-right">
+                            <select name="valid_filter" class="form-control vch-valid-filter">
+                                <option value=""><?php __('lblAll'); ?></option>
                                 <?php foreach (array('always', 'fixed', 'period', 'recurring') as $k) : ?>
-                                    <button type="button" class="btn btn-default btn-filter" data-column="valid" data-value="<?php echo $k; ?>"><?php echo pjSanitize::html(@$vv[$k]); ?></button>
+                                    <option value="<?php echo $k; ?>"><?php echo pjSanitize::html(@$vv[$k]); ?></option>
                                 <?php endforeach; ?>
-                            </div>
+                            </select>
                         </div>
                     </div>
                     <div id="grid"></div>
@@ -90,7 +91,6 @@ myLabel.code = "<?php __('voucher_code', false, true); ?>";
 myLabel.services = "<?php __('voucher_services', false, true); ?>";
 myLabel.discount = "<?php __('voucher_discount', false, true); ?>";
 myLabel.valid = "<?php __('voucher_valid', false, true); ?>";
-myLabel.usage = "<?php __('voucher_usage', false, true); ?>";
 myLabel.status = "<?php __('voucher_status', false, true); ?>";
 myLabel.active = "<?php __('voucher_status_active', false, true); ?>";
 myLabel.inactive = "<?php __('voucher_status_inactive', false, true); ?>";

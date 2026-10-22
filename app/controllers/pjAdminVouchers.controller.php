@@ -80,7 +80,7 @@ class pjAdminVouchers extends pjAdmin
 
 		$valid = $this->_post->toString('valid');
 		$data['valid'] = in_array($valid, array('always', 'fixed', 'period', 'recurring'), true) ? $valid : 'always';
-		$data['valid_on'] = $this->_post->toString('valid_on') === 'appointment' ? 'appointment' : 'booking';
+		$data['valid_on'] = $valid === 'always' ? 'booking' : 'appointment'; // windows always refer to the appointment
 		$data['date_from'] = ':NULL';
 		$data['date_to'] = ':NULL';
 		$data['time_from'] = ':NULL';
@@ -174,6 +174,12 @@ class pjAdminVouchers extends pjAdmin
 				}
 			}
 			$service_ids = array_values(array_unique($service_ids));
+			if (empty($service_ids))
+			{
+				// services were selected but none of them exists (tampered form / service deleted meanwhile):
+				// never fall back to "all services" silently
+				$errors[] = 'voucher_err_services';
+			}
 		}
 
 		return array($data, $service_ids, array_values(array_unique($errors)));
@@ -424,14 +430,10 @@ class pjAdminVouchers extends pjAdmin
 				(SELECT GROUP_CONCAT(TL.content SEPARATOR ', ')
 					FROM `%s` AS TVS
 					INNER JOIN `%s` AS TL ON TL.model='pjService' AND TL.foreign_id=TVS.service_id AND TL.locale='%u' AND TL.field='name'
-					WHERE TVS.voucher_id = t1.id) AS `services`,
-				(SELECT COUNT(*) FROM `%s` AS TB WHERE TB.voucher_code = t1.code AND TB.calendar_id = t1.calendar_id
-					AND (TB.booking_status='confirmed' OR (TB.booking_status='pending' AND UNIX_TIMESTAMP(TB.created) >= UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL %u MINUTE))))) AS `used`",
+					WHERE TVS.voucher_id = t1.id) AS `services`",
 				pjVoucherServiceModel::factory()->getTable(),
 				pjMultiLangModel::factory()->getTable(),
-				$this->getLocaleId(),
-				pjBookingModel::factory()->getTable(),
-				(int) $this->option_arr['o_pending_time']
+				$this->getLocaleId()
 			)))
 			->orderBy("`$column` $direction")->limit($rowCount, $offset)->findAll()->getData();
 
@@ -460,7 +462,6 @@ class pjAdminVouchers extends pjAdmin
 				default:
 					$data[$k]['valid_f'] = @$valids['always'];
 			}
-			$data[$k]['usage_f'] = (int) $v['used'] . ((int) $v['max_uses'] > 0 ? ' / ' . (int) $v['max_uses'] : '');
 			$data[$k]['status_f'] = $v['status'] === 'T' ? __('voucher_status_active', true) : __('voucher_status_inactive', true);
 		}
 
